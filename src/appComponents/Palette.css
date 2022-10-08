@@ -1,0 +1,14 @@
+button {
+    margin: 0 1rem;
+}
+
+#Main {
+    display: flex;
+    justify-content: center;
+}
+
+.Swatch {
+    height: 6rem;
+    width: 3rem;
+    background-color: pink;
+}

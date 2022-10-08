@@ -1,5 +1,6 @@
 import './App.css';
 import Header from './appComponents/Header';
+import Palette from './appComponents/Palette';
 import Footer from './appComponents/Footer';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
       <header className="App-header">
         <Header />
       </header>
+      <Palette />
       <Footer />
     </div>
   );
