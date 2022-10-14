@@ -2,13 +2,31 @@ button {
     margin: 0 1rem;
 }
 
+#Buttons {
+    padding: 1rem; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Instructions {
+    text-align: center;
+}
+
 #Main {
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 
 .Swatch {
     height: 6rem;
     width: 3rem;
-    background-color: pink;
+    margin: 0 .5rem;
+}
+
+#Swatches {
+    display: flex;
+    justify-content: center;
+    margin: 2rem;
 }
