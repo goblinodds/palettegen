@@ -19,8 +19,6 @@ export default function Palette() {
     const [swatchNum, setSwatchNum] = useState([
     ]);
 
-    const [numLock, setNumLock] = useState(false);
-
     const swatchAdd = () => {
         if (swatchNum.length < 10) {
             setSwatchNum([...swatchNum, { color: '#000000'}])
@@ -41,30 +39,27 @@ export default function Palette() {
 
     return (
         <div id='Main'>
-            <div id='Buttons'>
+            <div className='Options'>
 
                 {/* ADD/SUBTRACT SWATCHES */}
-                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 && !numLock ? 100: 0}}>-</button>
+                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0}}>-</button>
                 
-                {!numLock && 'set number of swatches'}
+                set number of swatches
 
-                {numLock && <div>
-                                <Slider />
-                                <button>lock darkest value</button>
-                            </div>}
-
-                {numLock && <div>
-                                <Slider />
-                                <button>lock lightest value</button>
-                            </div>}
-
-                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 && !numLock ? 100: 0}}>+</button>
+                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10}}>+</button>
 
             </div>
-            {/* CONFIRM BUTTON */}
-            <div id='Buttons'>
-                <button onClick={() => setNumLock(true)} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>confirm</button>
+            <div className='Options Values'>
+                <div className='slider-control'>
+                    <Slider />
+                    <button className='value-set'>set darkest value</button>   
+                </div>
+                <div className='slider-control'>
+                    <Slider />
+                    <button className='value-set'>set lightest value</button>                
+                </div>
             </div>
+
             <div id='Swatches'>
                 {swatchNum.map((swatch, index) => (
                     <div className='Swatch' key={index} style={{ background: swatch.color }}></div>

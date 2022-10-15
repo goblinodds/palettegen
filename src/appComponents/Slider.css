@@ -1,9 +1,7 @@
 .slider {
     /* max width of your slider */
     width: 20rem;
-    /* Optional: Only If you want to center your slider in the page */
-    margin: -1rem 1rem 0 1rem;
-  }
+}
   
   .slider-track {
     /* Top value to align your track to the center of your thumb */
