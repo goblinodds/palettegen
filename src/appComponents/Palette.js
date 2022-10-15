@@ -1,19 +1,50 @@
 import './Palette.css';
+import ReactSlider from 'react-slider';
 import { useState } from 'react';
 
 // TODO
-// figure out how to get the text and buttons to stay in position
-// something that tells u you cant go below 0 (or button disappears if you go too high/low)
-// CONFIRM button that removes the -/+ buttons and moves to...
 // set darkest value
 // set lightest value
+// filterBrightness for value scale (filters in general)
+
+// https://retool.com/blog/building-a-react-slider/
+
+// interpolate: https://culorijs.org/api/
+// final: button for (CVD) simulations
+
+
+// have to make separate sliders
+// lift state up to the main thing and have 2 different states?? OR maybe there's another way
+// but you cant move props from a child to a parent, so you can't get "currentValue" out the way you want to
+const Slider = () => {
+    
+    const [currentValue, setCurrentValue] = useState(0)
+
+    return (
+
+        <div>
+            {/* values: 1 to 100 */}
+            <ReactSlider 
+                className='slider'
+                trackClassName='slider-track'
+                thumbClassName='slider-thumb'
+                value={currentValue}
+                onChange={(value) => setCurrentValue(value)}
+            />
+        </div>
+    )
+}
 
 export default function Palette() {
 
     const [swatchNum, setSwatchNum] = useState([
     ]);
 
-    const [numLock, setNumLock] = useState(false);
+    // const [currentMaxValue, setCurrentMaxValue] = useState(0)
+
+    // const [currentMinValue, setCurrentMinValue] = useState(0)
+
+    // const [swatchValue, setSwatchValue] = useState(0);
 
     const swatchAdd = () => {
         if (swatchNum.length < 10) {
@@ -29,16 +60,34 @@ export default function Palette() {
         }
     }
 
+    // useState to update color of swatch
+    // according to user input hex
+
+
     return (
         <div id='Main'>
-            <div id='Buttons'>
-                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 && !numLock ? 100: 0}}>-</button>
+            <div className='Options'>
+
+                {/* ADD/SUBTRACT SWATCHES */}
+                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>-</button>
+                
                 set number of swatches
-                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 && !numLock ? 100: 0}}>+</button>
+
+                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 ? 100 : 0}}>+</button>
+
             </div>
-            <div id='Buttons'>
-                <button onClick={() => setNumLock(true)} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>confirm</button>
+
+            <div className='Options Values'>
+                <div className='slider-control'>
+                    <Slider />
+                    <button className='value-set'>set maximum value</button>   
+                </div>
+                <div className='slider-control'>
+                    <Slider />
+                    <button className='value-set'>set minimum value</button>                
+                </div>
             </div>
+
             <div id='Swatches'>
                 {swatchNum.map((swatch, index) => (
                     <div className='Swatch' key={index} style={{ background: swatch.color }}></div>
