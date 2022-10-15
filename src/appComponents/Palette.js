@@ -1,23 +1,50 @@
 import './Palette.css';
-import Slider from './Slider.js';
+import ReactSlider from 'react-slider';
 import { useState } from 'react';
 
 // TODO
 // set darkest value
-    // forms to go beside the set darkest/lightest
-    // look up how to use forms in reactjs
 // set lightest value
+// filterBrightness for value scale (filters in general)
 
 // https://retool.com/blog/building-a-react-slider/
 
-// filterBrightness for value scale (filters in general)
 // interpolate: https://culorijs.org/api/
 // final: button for (CVD) simulations
+
+
+// have to make separate sliders
+// lift state up to the main thing and have 2 different states?? OR maybe there's another way
+// but you cant move props from a child to a parent, so you can't get "currentValue" out the way you want to
+const Slider = () => {
+    
+    const [currentValue, setCurrentValue] = useState(0)
+
+    return (
+
+        <div>
+            {/* values: 1 to 100 */}
+            <ReactSlider 
+                className='slider'
+                trackClassName='slider-track'
+                thumbClassName='slider-thumb'
+                value={currentValue}
+                onChange={(value) => setCurrentValue(value)}
+            />
+        </div>
+    )
+}
 
 export default function Palette() {
 
     const [swatchNum, setSwatchNum] = useState([
     ]);
+
+    // const [currentMaxValue, setCurrentMaxValue] = useState(0)
+
+    // const [currentMinValue, setCurrentMinValue] = useState(0)
+
+    // const [swatchValue, setSwatchValue] = useState(0);
 
     const swatchAdd = () => {
         if (swatchNum.length < 10) {
@@ -42,21 +69,22 @@ export default function Palette() {
             <div className='Options'>
 
                 {/* ADD/SUBTRACT SWATCHES */}
-                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0}}>-</button>
+                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>-</button>
                 
                 set number of swatches
 
-                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10}}>+</button>
+                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 ? 100 : 0}}>+</button>
 
             </div>
+
             <div className='Options Values'>
                 <div className='slider-control'>
                     <Slider />
-                    <button className='value-set'>set darkest value</button>   
+                    <button className='value-set'>set maximum value</button>   
                 </div>
                 <div className='slider-control'>
                     <Slider />
-                    <button className='value-set'>set lightest value</button>                
+                    <button className='value-set'>set minimum value</button>                
                 </div>
             </div>
 

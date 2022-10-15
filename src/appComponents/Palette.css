@@ -38,3 +38,42 @@ button {
     justify-content: center;
     margin: 2rem;
 }
+
+.slider {
+    /* max width of your slider */
+    width: 20rem;
+}
+  
+  .slider-track {
+    /* Top value to align your track to the center of your thumb */
+    top: .75rem;
+    /* thickness of the track */
+    height: .5rem;
+   /* default color of your track */
+    background: rgb(238, 238, 238);
+    border-style: solid;
+    border-width: .1rem;
+    border-color: rgb(183, 183, 183);
+  }
+
+  .slider-thumb {
+    cursor: pointer;
+    /*color for the thumb */
+    background: #ddd;
+    /* shape of the thumb: circle */
+    width: .75rem;
+    height: 2rem;
+    border-radius: 20%;
+    border-style: solid;
+    border-width: .1rem;
+    border-color: rgb(183, 183, 183);
+  }
+
+  .slider-thumb:hover {
+    border-color: rgb(120, 120, 120);
+  }
+  
+  .slider-track.slider-track-0 {
+    /* color of the track before the thumb */
+    background: rgb(77, 77, 77);
+  }
