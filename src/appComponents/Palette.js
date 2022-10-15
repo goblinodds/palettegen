@@ -1,12 +1,18 @@
 import './Palette.css';
+import Slider from './Slider.js';
 import { useState } from 'react';
 
 // TODO
-// figure out how to get the text and buttons to stay in position
-// something that tells u you cant go below 0 (or button disappears if you go too high/low)
-// CONFIRM button that removes the -/+ buttons and moves to...
 // set darkest value
+    // forms to go beside the set darkest/lightest
+    // look up how to use forms in reactjs
 // set lightest value
+
+// https://retool.com/blog/building-a-react-slider/
+
+// filterBrightness for value scale (filters in general)
+// interpolate: https://culorijs.org/api/
+// final: button for (CVD) simulations
 
 export default function Palette() {
 
@@ -29,13 +35,33 @@ export default function Palette() {
         }
     }
 
+    // useState to update color of swatch
+    // according to user input hex
+
+
     return (
         <div id='Main'>
             <div id='Buttons'>
+
+                {/* ADD/SUBTRACT SWATCHES */}
                 <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 && !numLock ? 100: 0}}>-</button>
-                set number of swatches
+                
+                {!numLock && 'set number of swatches'}
+
+                {numLock && <div>
+                                <Slider />
+                                <button>lock darkest value</button>
+                            </div>}
+
+                {numLock && <div>
+                                <Slider />
+                                <button>lock lightest value</button>
+                            </div>}
+
                 <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 && !numLock ? 100: 0}}>+</button>
+
             </div>
+            {/* CONFIRM BUTTON */}
             <div id='Buttons'>
                 <button onClick={() => setNumLock(true)} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>confirm</button>
             </div>
