@@ -35,22 +35,35 @@ const swatches = [
 let neededSwatches = swatchNum - swatches.length;
 
 // add swatches until you reach the max (swatchNum)
-function interpolate(num) {
+function interpolateValue(num) {
+    // black value
+    const minValue = swatches[0].r;
+    // white value
+    const maxValue = swatches[swatches.length-1].r;
+    const totalValue = maxValue - minValue;
+    // how much to subtract from the value of the next swatch
+    const increment = totalValue/num;
+
+    let currentValue = totalValue;
+
     while (swatches.length < num){
-        console.log(`${swatches.length} / ${swatchNum}`);
+
+        currentValue = currentValue - increment;
+
         swatches.splice(1, 0, {
             mode: 'rgb',
-            r: .5,
-            g: .5,
-            b: .5,
+            r: currentValue,
+            g: currentValue,
+            b: currentValue,
             alpha: 1
         });
+
+        console.log(`current value 3: ${currentValue}`);
     };
 };
 
-
 export default function Palette(){
-    interpolate(swatchNum);
+    interpolateValue(swatchNum);
     return (
         <div id='Swatches'>
             {swatches.map((swatch, index) => {
