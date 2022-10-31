@@ -5,7 +5,9 @@ import { formatHex8 } from 'culori';
 
 // https://culorijs.org/api/
 
-// STATIC VERSION
+// TODO
+// fix so it works with any min value
+// BUILD STATIC VERSION
 // set up functions that do the other steps from this:
 // https://twitter.com/goblincodes/status/1586878836553453571?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
 
