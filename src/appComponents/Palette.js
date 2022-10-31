@@ -1,186 +1,76 @@
 import './Palette.css';
 import ReactSlider from 'react-slider';
 import { useState } from 'react';
+import { formatHex8 } from 'culori';
 
-// TODO
-// set darkest value
-// set lightest value
-// filterBrightness for value scale (filters in general)
+// https://culorijs.org/api/
 
-// https://retool.com/blog/building-a-react-slider/
+// STATIC VERSION
+// set up functions that do the other steps from this:
+// https://twitter.com/goblincodes/status/1586878836553453571?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
 
-// interpolate: https://culorijs.org/api/
-// final: button for (CVD) simulations
+// LATER VERSIONS
+//// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
 
+// mandatory seven swatches, but i'd like to be able to let users change this
+let swatchNum = 7;
 
-// have to make separate sliders
-// lift state up to the main thing and have 2 different states?? OR maybe there's another way
-// but you cant move props from a child to a parent, so you can't get "currentValue" out the way you want to
-const Slider = () => {
-    
-    const [currentValue, setCurrentValue] = useState(0)
-
-    return (
-
-        <div>
-            {/* values: 1 to 100 */}
-            <ReactSlider 
-                className='slider'
-                trackClassName='slider-track'
-                thumbClassName='slider-thumb'
-                value={currentValue}
-                onChange={(value) => setCurrentValue(value)}
-            />
-        </div>
-    )
-}
-
-export default function Palette() {
-
-    const [swatchNum, setSwatchNum] = useState([
-    ]);
-
-    // const [currentMaxValue, setCurrentMaxValue] = useState(0)
-
-    // const [currentMinValue, setCurrentMinValue] = useState(0)
-
-    // const [swatchValue, setSwatchValue] = useState(0);
-
-    const swatchAdd = () => {
-        if (swatchNum.length < 10) {
-            setSwatchNum([...swatchNum, { color: '#000000'}])
-        }
+const swatches = [
+    {
+        value: 0
+    },
+    {
+        value: 1
     }
+]
 
-    const swatchRemove = () => {
-        if (swatchNum.length > 0) {
-            const list = [...swatchNum];
-            list.splice(swatchNum.length - 1, 1);
-            setSwatchNum(list);
-        }
-    }
+// add swatches until you reach the max (swatchNum)
+function interpolateValue(num) {
+    // black value
+    const minValue = swatches[0].value;
+    // white value
+    const maxValue = swatches[swatches.length - 1].value;
+    const totalValue = maxValue - minValue;
+    // how much to subtract from the value of the next swatch
+    const increment = totalValue / num;
 
-    // useState to update color of swatch
-    // according to user input hex
+    let currentValue = totalValue;
 
+    while (swatches.length < num) {
 
-    return (
-        <div id='Main'>
-            <div className='Options'>
+        currentValue = currentValue - increment;
 
-                {/* ADD/SUBTRACT SWATCHES */}
-                <button onClick={swatchRemove} style={{opacity: swatchNum.length > 0 ? 100 : 0}}>-</button>
-                
-                set number of swatches
+        swatches.splice(1, 0, {
+            value: currentValue
+        });
 
-                <button onClick={swatchAdd} style={{opacity: swatchNum.length < 10 ? 100 : 0}}>+</button>
-
-            </div>
-
-            <div className='Options Values'>
-                <div className='slider-control'>
-                    <Slider />
-                    <button className='value-set'>set maximum value</button>   
-                </div>
-                <div className='slider-control'>
-                    <Slider />
-                    <button className='value-set'>set minimum value</button>                
-                </div>
-            </div>
-
-            <div id='Swatches'>
-                {swatchNum.map((swatch, index) => (
-                    <div className='Swatch' key={index} style={{ background: swatch.color }}></div>
-                ))}
-            </div>
-        </div>
-    )
+        console.log(`current value 3: ${currentValue}`);
+    };
 };
 
+function culorifyValues(arr) {
+    // iterate over array
+    for (let i = 0; i < arr.length; i++) {
+        // TODO think i can make this generalize by
+        // if r, g, and b are in the object already, then multiply r, g, and b by value
+        // if not, do the rest of this
+        arr[i].r = arr[i].value;
+        arr[i].g = arr[i].value;
+        arr[i].b = arr[i].value;
+    }
+};
 
-// REFERENCE
-/*
-const Gig = (props) => {
+export default function Palette() {
+    interpolateValue(swatchNum);
+    culorifyValues(swatches);
     return (
-        <div className='GigWrapper'>
-            <div className='VideoImg'>
-                <a href={props.video} target='_blank' rel='noopener noreferrer'>
-                    <img src={props.videoImg} alt={props.videoAlt}/> 
-                </a>
-            </div>
-            <div className='TextBox'>
-                <h1>ROLE</h1>
-                <p>{props.contribution}</p>
-                <h1>CLIENT</h1>
-                <p><a href={props.clientSite} target='_blank' rel='noopener noreferrer'>{props.client}</a></p>
-            </div>
+        <div id='Swatches'>
+            {swatches.map((swatch, index) => {
+                let color = formatHex8(swatch);
+                return (
+                    <div className='Swatch' key={index} style={{ background: color }}></div>
+                )
+            })}
         </div>
     )
 }
-
-function Video() {
-    return (
-
-        <div className='AllVideos'>
-                <iframe src='https://www.youtube.com/embed/savAbVtgtT0' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen>
-                    Sorry, your browser doesn't support embedded videos.
-                </iframe>
-            <div className='VideoList'>
-                <Gig video={'https://youtu.be/r8IfKcmJR88'}
-                videoImg={portfolio_CSOSummer2022}
-                videoAlt={'anime-style drawing of Cal State student at home, seated in front of laptop, taking notes at their desk'}
-                contribution={'animation / concept'}
-                clientSite={'https://www.dentagency.com/'}
-                client={'DENT Agency'}/>
-            
-                <Gig video={'https://youtu.be/VjsvBFznJfo'}
-                videoImg={portfolio_BusyBee}
-                videoAlt={'cartoon bee wearing glasses checking off boxes on a clipboard as he oversees construction of a beehive; soldier bees lounge on the scaffolding, smoking cigarettes, while childlike drones vandalize the hive with a game of tic-tac-toe'}
-                contribution={'animation'}
-                clientSite={'https://pacificlegal.org/'}
-                client={'Pacific Legal Foundation'}/>
-
-                <Gig video={'https://youtu.be/VUErkf3XEEs'}
-                videoImg={portfolio_CalStateActiveShooter}
-                videoAlt={'drawing of four students looking at the viewer with determined expressions'}
-                contribution={'animation / voiceover'}
-                clientSite={'https://www.dentagency.com/'}
-                client={'DENT Agency'}/>
-
-                <Gig video={'https://youtube.com/playlist?list=PLNfeyqXaRNagTTdNn-3V2CA1IXGp3dHsj'}
-                videoImg={portfolio_LegallySpeaking}
-                videoAlt={'drawing of the show host, Lou Perez, dressed as Lady Justice, hairy chest exposed, speaking into a microphone labeled "WTI"'}
-                contribution={'illustration'}
-                clientSite={'https://www.youtube.com/c/WeTheInternetTV'}
-                client={'We The Internet TV'}/>
-            </div>
-        </div>
-    );
-}
-*/
-
-/*
-
-const images = [visa, petrin, fractal, simler, rowan, meron, tinna, lolly, luta, koylee, mermay, chalion, frippery, ripper]
-
-function Illustration () {
-
-    const [imageToShow, setImageToShow] = useState('');
-    const [lightboxDisplay, setLightboxDisplay] = useState(false);
-
-    // CREATE IMAGE CARDS
-
-    const imageCards = images.map((image) => (
-        <img className='image-card' alt='thumbnail'
-        onClick={() => showImage(image)}
-        src={image} /> )
-    )
-
-    return (
-        <div id='Gallery'>
-            {imageCards}
-        </div>
-
-    );
-}
-*/
