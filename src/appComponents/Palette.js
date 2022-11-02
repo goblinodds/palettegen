@@ -15,6 +15,7 @@ import './Palette.css';
 
 // mandatory seven swatches, but i'd like to be able to let users change this
 let swatchNum = 7;
+let lockedSwatchIndex = 3;
 
 // must be 0-100 inclusive
 // TODO let user input values
@@ -32,14 +33,15 @@ export default function Palette() {
     interpolateValue(swatchNum);
     // step 2: pick a hue out of 359
     //TODO let user input hue
-    newHue(100);
-    temperature(3, 18) 
+    newHue(200);
+    decreaseSaturation(28);
+    // temperature(-12);
 
-    console.log(swatches);
     return (
         <div id='Swatches'>
             {swatches.map((swatch, index) => {
-                let color = `hsl(${swatch.hue}deg 100% ${swatch.value}%)`;
+                let color = `hsl(${swatch.hue}deg ${swatch.saturation}% ${swatch.value}%)`;
+                console.log(color)
                 return (
                     <div key={index}>
                         <div className='Swatch' style={{ background: color }}></div>
@@ -84,19 +86,57 @@ function newHue(selectedHue) {
     for (let i = 0; i < swatches.length; i++) {
         // add the same hue to each one
         swatches[i].hue = selectedHue;
+        swatches[i].saturation = 100;
     }
 }
 
-// STEP 3: TEMPERATURE RANGE
+// incrementing away from locked swatch
+function spectrum(increment, key) {
+    for (let i = 0; i < swatches.length; i++) {
+        let currentSwatch = swatches[i];
+        // number of swatches from current to locked
+        let swatchesToIncrement;
+        if (i <= lockedSwatchIndex) {
+            swatchesToIncrement = lockedSwatchIndex - i;
+            // SUBTRACT the increment times however many swatches away from locked the current swatch is
+            currentSwatch.key = currentSwatch.key - (increment*swatchesToIncrement);
+        } else if (i > lockedSwatchIndex) {
+            swatchesToIncrement = i - lockedSwatchIndex;
+            // SUBTRACT the increment times however many swatches away from locked the current swatch is
+            currentSwatch.key = currentSwatch.key + (increment*swatchesToIncrement);
+        }
+    }
+    console.log(swatches);
+}
+
+// STEP 3: SATURATION
+// TODO let user choose a swatch to lock
+// everything moving outward from it gets less saturated
+function decreaseSaturation(increment) {
+    for (let i = 0; i < swatches.length; i++) {
+        let currentSwatch = swatches[i];
+        // number of swatches from current to locked
+        let swatchesToIncrement;
+        if (i <= lockedSwatchIndex) {
+            swatchesToIncrement = lockedSwatchIndex - i;
+        } else if (i > lockedSwatchIndex) {
+            swatchesToIncrement = i - lockedSwatchIndex;
+        }
+        // SUBTRACT the increment times however many swatches away from locked the current swatch is
+        currentSwatch.saturation = currentSwatch.saturation - (increment*swatchesToIncrement);
+    }
+}
+
+// STEP 4: TEMPERATURE RANGE
 // pick a swatch to lock
 // increment accepts negative numbers
 // TODO limit the range of #s accepted
-function temperature(lockedSwatchIndex, increment) {
+function temperature(increment) {
     // iterate over all swatches
     for (let i = 0; i < swatches.length; i++) {
         let currentSwatch = swatches[i];
-        let swatchesToIncrement;
         // number of swatches from current to locked
+        let swatchesToIncrement;
         if (i <= lockedSwatchIndex) {
             swatchesToIncrement = lockedSwatchIndex - i;
             // SUBTRACT the increment times however many swatches away from locked the current swatch is
