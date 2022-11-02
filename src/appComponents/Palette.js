@@ -35,7 +35,7 @@ export default function Palette() {
     //TODO let user input hue
     newHue(200);
     decreaseSaturation(28);
-    // temperature(-12);
+    temperature(-12);
 
     return (
         <div id='Swatches'>
@@ -111,6 +111,7 @@ function spectrum(increment, key) {
 
 // STEP 3: SATURATION
 // TODO let user choose a swatch to lock
+// TODO limit range of #s accepted (positive only)
 // everything moving outward from it gets less saturated
 function decreaseSaturation(increment) {
     for (let i = 0; i < swatches.length; i++) {
