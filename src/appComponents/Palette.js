@@ -1,12 +1,10 @@
 import './Palette.css';
-import ReactSlider from 'react-slider';
-import { useState } from 'react';
+// import ReactSlider from 'react-slider';
+// import { useState } from 'react';
 import { formatHex8 } from 'culori';
 
 // https://culorijs.org/api/
 
-// TODO
-// fix so it works with any min value
 // BUILD STATIC VERSION
 // set up functions that do the other steps from this:
 // https://twitter.com/goblincodes/status/1586878836553453571?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
@@ -19,7 +17,7 @@ let swatchNum = 7;
 
 const swatches = [
     {
-        value: 0
+        value: .3
     },
     {
         value: 1
@@ -28,15 +26,16 @@ const swatches = [
 
 // add swatches until you reach the max (swatchNum)
 function interpolateValue(num) {
-    // black value
+    // 'black' value = value of first object in swatches array
     const minValue = swatches[0].value;
-    // white value
+    // 'white' value = value of last object in swatches array
     const maxValue = swatches[swatches.length - 1].value;
+    // difference between 'black' and 'white'
     const totalValue = maxValue - minValue;
     // how much to subtract from the value of the next swatch
     const increment = totalValue / num;
 
-    let currentValue = totalValue;
+    let currentValue = maxValue;
 
     while (swatches.length < num) {
 
@@ -46,7 +45,7 @@ function interpolateValue(num) {
             value: currentValue
         });
 
-        console.log(`current value 3: ${currentValue}`);
+        console.log(`value: ${currentValue}`);
     };
 };
 
@@ -70,7 +69,9 @@ export default function Palette() {
             {swatches.map((swatch, index) => {
                 let color = formatHex8(swatch);
                 return (
-                    <div className='Swatch' key={index} style={{ background: color }}></div>
+                    <div>
+                        <div className='Swatch' key={index} style={{ background: color }}></div>
+                    </div>
                 )
             })}
         </div>
