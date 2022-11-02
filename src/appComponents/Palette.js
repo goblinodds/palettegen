@@ -1,7 +1,6 @@
 import './Palette.css';
 // import ReactSlider from 'react-slider';
 // import { useState } from 'react';
-// import { formatHex8 } from 'culori';
 
 // https://culorijs.org/api/
 
@@ -18,22 +17,29 @@ import './Palette.css';
 let swatchNum = 7;
 
 // must be 0-100 inclusive
+// TODO let user input values
 const swatches = [
     {
-        value: 20
+        value: 30
     },
     {
-        value: 100
+        value: 90
     }
 ]
 
 export default function Palette() {
     // step 1: interpolate between 'black' and 'white'
     interpolateValue(swatchNum);
+    // step 2: pick a hue out of 359
+    //TODO let user input hue
+    newHue(100);
+    temperature(3, 18) 
+
+    console.log(swatches);
     return (
         <div id='Swatches'>
             {swatches.map((swatch, index) => {
-                let color = `hsl(0 0% ${swatch.value}%)`;
+                let color = `hsl(${swatch.hue}deg 100% ${swatch.value}%)`;
                 return (
                     <div key={index}>
                         <div className='Swatch' style={{ background: color }}></div>
@@ -68,10 +74,46 @@ function interpolateValue(num) {
             value: currentValue
         });
 
-        console.log(`value: ${currentValue}`);
     };
 };
 
 // STEP 2: HUES
-// pick 1 swatch
-// either R, G, or B must continue to be the same as VALUE
+// apply the same hue to all swatches
+function newHue(selectedHue) {
+    // iterate over all swatches
+    for (let i = 0; i < swatches.length; i++) {
+        // add the same hue to each one
+        swatches[i].hue = selectedHue;
+    }
+}
+
+// STEP 3: TEMPERATURE RANGE
+// pick a swatch to lock
+// increment accepts negative numbers
+// TODO limit the range of #s accepted
+function temperature(lockedSwatchIndex, increment) {
+    // iterate over all swatches
+    for (let i = 0; i < swatches.length; i++) {
+        let currentSwatch = swatches[i];
+        let swatchesToIncrement;
+        // number of swatches from current to locked
+        if (i <= lockedSwatchIndex) {
+            swatchesToIncrement = lockedSwatchIndex - i;
+            // SUBTRACT the increment times however many swatches away from locked the current swatch is
+            currentSwatch.hue = currentSwatch.hue - (increment*swatchesToIncrement);
+        } else if (i > lockedSwatchIndex) {
+            swatchesToIncrement = i - lockedSwatchIndex;
+            // SUBTRACT the increment times however many swatches away from locked the current swatch is
+            currentSwatch.hue = currentSwatch.hue + (increment*swatchesToIncrement);
+        }
+
+        // cleans up #s so they stay within the 0 to 359 inclusive range
+        if (currentSwatch.hue >= 360) {
+            currentSwatch.hue = currentSwatch.hue-360
+        } else if (currentSwatch.hue < 0) {
+            currentSwatch.hue = currentSwatch.hue+360
+        }
+        console.log(currentSwatch.hue);
+    }
+
+}
