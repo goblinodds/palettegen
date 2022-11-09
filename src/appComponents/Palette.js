@@ -4,6 +4,14 @@ import './Palette.css';
 
 // https://culorijs.org/api/
 
+// TODO
+// make a version that's a random palette generator that you can put on your site?
+// then work on a version that lets users input options??
+
+// NOTE
+// CURRENT APPLICATION applies the temperature shift ON TOP OF the hue changes for the final palette
+// when you make it interactive probably change this so it locks to the "main" color
+
 // BUILD STATIC VERSION
 // monochrome is default
 // analogous - pick a swatch to change the color of
@@ -47,10 +55,23 @@ export default function Palette() {
     newHue(50);
     decreaseSaturation(28);
     temperature(-12);
-    // COMPLEMENTARY PALETTE
+
+    //random swatch selector
+    // didn't bother to make sure it doesn't repeat
+    // because we'll be replacing this
     let randomSwatchA = Math.floor(Math.random()*swatchNum);
-    complementary(randomSwatchA);
-    currentScheme = 'complementary';
+    let randomSwatchB = Math.floor(Math.random()*swatchNum);
+    let randomSwatchC = Math.floor(Math.random()*swatchNum);
+    // // COMPLEMENTARY PALETTE
+    // complementary(randomSwatchA);
+    // // ANALOGOUS PALETTE
+    // analogous(randomSwatchA, randomSwatchB);
+    // // SPLIT COMPLEMENTARY PALETTE
+    // split(randomSwatchA, randomSwatchB);
+    // // TRIADIC
+    // triadic(randomSwatchA, randomSwatchB);
+    //TETRADIC
+    tetradic(randomSwatchA, randomSwatchB, randomSwatchC);
 
     return (
         <div>
@@ -157,12 +178,69 @@ function temperature(increment) {
 // lock all swatches
 // pick a swatch to unlock everything but VALUE
 // change its hue only (possibly do this for multiple swatches)
+// probably some way to REFACTOR these so you dont have to keep redefining selectedSwatch
+
 // COMPLEMENTARY
 function complementary(swatch){
     let selectedSwatch = swatches[swatch];
     // changes swatch hue to one directly across the color wheel
     selectedSwatch.hue += 180;
     hueCleanup(selectedSwatch);
+    currentScheme = 'complementary';
+}
+
+//ANALOGOUS
+// two swatches that are 60 or fewer degrees out from the standard hue)
+function analogous(swatchA, swatchB){
+    let selectedSwatchA = swatches[swatchA];
+    let selectedSwatchB = swatches[swatchB];
+
+    // random number that's 60 or less
+    // but possibly you want it to be at least 10 or you won't notice?
+    selectedSwatchA.hue += (Math.floor(Math.random()*60));
+    selectedSwatchB.hue -= (Math.floor(Math.random()*60));
+    hueCleanup(selectedSwatchA);
+    hueCleanup(selectedSwatchB);
+    currentScheme = 'analogous';
+}
+
+// SPLIT COMPLEMENTARY
+function split(swatchA, swatchB){
+    let selectedSwatchA = swatches[swatchA];
+    let selectedSwatchB = swatches[swatchB];
+    // changes swatches' hues to two hues 150 degrees away from main color on the color wheel
+    selectedSwatchA.hue += 150;
+    selectedSwatchB.hue -= 150;
+    hueCleanup(selectedSwatchA);
+    hueCleanup(selectedSwatchB);
+    currentScheme = 'split complementary';
+}
+
+// TRIADIC
+function triadic(swatchA, swatchB){
+    let selectedSwatchA = swatches[swatchA];
+    let selectedSwatchB = swatches[swatchB];
+    // changes swatches' hues to two hues 120 degrees away from main color on the color wheel - equidistant
+    selectedSwatchA.hue += 120;
+    selectedSwatchB.hue -= 120;
+    hueCleanup(selectedSwatchA);
+    hueCleanup(selectedSwatchB);
+    currentScheme = 'triadic';
+}
+
+// TETRADIC
+function tetradic(swatchA, swatchB, swatchC){
+    let selectedSwatchA = swatches[swatchA];
+    let selectedSwatchB = swatches[swatchB];
+    let selectedSwatchC = swatches[swatchC];
+    // changes THREE swatches' hues
+    // each 90 degrees from the next
+    selectedSwatchA.hue += 90;
+    selectedSwatchB.hue += 180;
+    selectedSwatchC.hue -= 90;
+    hueCleanup(selectedSwatchA);
+    hueCleanup(selectedSwatchB);
+    currentScheme = 'tetradic';
 }
 
 // cleans up #s so they stay within the 0 to 359 inclusive range
