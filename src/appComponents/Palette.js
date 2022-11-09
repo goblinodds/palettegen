@@ -18,7 +18,7 @@ import './Palette.css';
 // like a checkbox for "consitent value gaps"
 // and if you uncheck it you can change each
 
-// tells you what the current type is-- monochrome, etc.
+// function that randomizes
 
 // LATER VERSIONS
 //// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
@@ -26,7 +26,7 @@ import './Palette.css';
 // mandatory seven swatches, but i'd like to be able to let users change this
 let swatchNum = 7;
 let lockedSwatchIndex = 3;
-let currentScheme = 'monochrome';
+let currentScheme = 'modified monochrome';
 
 // must be 0-100 inclusive
 // TODO let user input values
@@ -47,6 +47,10 @@ export default function Palette() {
     newHue(50);
     decreaseSaturation(28);
     temperature(-12);
+    // COMPLEMENTARY PALETTE
+    let randomSwatchA = Math.floor(Math.random()*swatchNum);
+    complementary(randomSwatchA);
+    currentScheme = 'complementary';
 
     return (
         <div>
@@ -143,11 +147,29 @@ function temperature(increment) {
         }
 
         // cleans up #s so they stay within the 0 to 359 inclusive range
-        if (currentSwatch.hue >= 360) {
-            currentSwatch.hue = currentSwatch.hue-360
-        } else if (currentSwatch.hue < 0) {
-            currentSwatch.hue = currentSwatch.hue+360
-        }
+        hueCleanup(currentSwatch);
     }
 
+}
+
+// STEP 5: OTHER PALETTE TYPES
+// lock all values
+// lock all swatches
+// pick a swatch to unlock everything but VALUE
+// change its hue only (possibly do this for multiple swatches)
+// COMPLEMENTARY
+function complementary(swatch){
+    let selectedSwatch = swatches[swatch];
+    // changes swatch hue to one directly across the color wheel
+    selectedSwatch.hue += 180;
+    hueCleanup(selectedSwatch);
+}
+
+// cleans up #s so they stay within the 0 to 359 inclusive range
+function hueCleanup (swatch) {
+    if (swatch.hue >= 360) {
+        swatch.hue = swatch.hue-360
+    } else if (swatch.hue < 0) {
+        swatch.hue = swatch.hue+360
+    }
 }
