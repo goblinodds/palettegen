@@ -22,6 +22,11 @@ button {
     margin: 4rem;
 }
 
+#Label {
+  display: flex;
+  justify-content: center;
+}
+
 #Main {
     display: flex;
     flex-direction: column;
