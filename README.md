@@ -1,4 +1,4 @@
-# goblin's palette generator
+# goblin's palette generator (for digital artists)
 
 Click "new random palette" button to generate a new set of colors.
 
