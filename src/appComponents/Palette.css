@@ -1,5 +1,10 @@
 button {
-    margin: 0 1rem;
+    margin: 1rem 1rem;
+}
+
+.Buttons {
+  display: flex;
+  justify-content: center;
 }
 
 .Options {
@@ -20,6 +25,12 @@ button {
 
 .value-set {
     margin: 4rem;
+}
+
+#Label {
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
 }
 
 #Main {
