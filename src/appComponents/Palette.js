@@ -2,10 +2,8 @@ import './Palette.css';
 // import ReactSlider from 'react-slider';
 import { useState } from 'react';
 
-// rerenders when state is updated with setblahblah
-// state here will probably be an index of an array of monochrome, etc.??
-
 // TODO
+// button that gives you a new random color to work with
 // make a version that's a random palette generator that you can put on your site?
 // THEN work on a version that lets users input options??
 
@@ -56,9 +54,11 @@ export default function Palette() {
     let randomSwatchB = Math.floor(Math.random()*swatchNum);
     let randomSwatchC = Math.floor(Math.random()*swatchNum);
 
-    paletteReset();
-
     const [paletteType, setPaletteType] = useState('monochrome');
+
+    const [baseHue, setBaseHue] = useState(50);
+
+    paletteReset(baseHue);
 
     if (paletteType === 'analogous') {
         analogous(randomSwatchA, randomSwatchB);
@@ -71,11 +71,9 @@ export default function Palette() {
     } else if (paletteType === 'tetradic') {
         tetradic(randomSwatchA, randomSwatchB, randomSwatchC);
     } else if (paletteType === 'monochrome') {
-        paletteReset();
-        currentScheme = 'monochrome'
+        paletteReset(baseHue);
+        currentScheme = 'monochrome (with temperature range)'
     }
-
-    console.log(swatches);
 
     return (
         <div>
@@ -91,7 +89,10 @@ export default function Palette() {
             </div>
             <div id='Label'>{currentScheme} palette</div>
             <div className='Buttons'>
-                <button onClick={()=> setPaletteType('monochrome')}>monochrome (w/ temperature range)</button>
+                <button onClick={()=>setBaseHue(Math.random()*255)}>new random palette</button>
+            </div>
+            <div className='Buttons'>
+                <button onClick={()=> setPaletteType('monochrome')}>monochrome</button>
                 <button onClick={()=> setPaletteType('analogous')}>analogous</button>
                 <button onClick={()=> setPaletteType('complementary')}>complementary</button>
                 <button onClick={()=> setPaletteType('split')}>split complementary</button>
@@ -105,7 +106,7 @@ export default function Palette() {
 // HELPER FUNCTIONS
 
 // PALETTE RESET
-function paletteReset() {
+function paletteReset(baseHue) {
     swatches = [
         {
             value: 30
@@ -118,7 +119,7 @@ function paletteReset() {
     // step 1: interpolate between 'black' and 'white'
     interpolateValue(swatchNum);
     // step 2: pick a hue out of 359
-    newHue(50);
+    newHues(baseHue);
     decreaseSaturation(28);
     temperature(-12);
 }
@@ -150,7 +151,7 @@ function interpolateValue(num) {
 
 // STEP 2: HUES
 // apply the same hue to all swatches
-function newHue(selectedHue) {
+function newHues(selectedHue) {
     // iterate over all swatches
     for (let i = 0; i < swatches.length; i++) {
         // add the same hue to each one
