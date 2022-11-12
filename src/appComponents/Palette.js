@@ -1,12 +1,13 @@
 import './Palette.css';
 // import ReactSlider from 'react-slider';
-// import { useState } from 'react';
+import { useState } from 'react';
 
-// https://culorijs.org/api/
+// rerenders when state is updated with setblahblah
+// state here will probably be an index of an array of monochrome, etc.??
 
 // TODO
 // make a version that's a random palette generator that you can put on your site?
-// then work on a version that lets users input options??
+// THEN work on a version that lets users input options??
 
 // NOTE
 // CURRENT APPLICATION applies the temperature shift ON TOP OF the hue changes for the final palette
@@ -38,7 +39,7 @@ let currentScheme = 'modified monochrome';
 
 // must be 0-100 inclusive
 // TODO let user input values
-const swatches = [
+let swatches = [
     {
         value: 30
     },
@@ -48,30 +49,33 @@ const swatches = [
 ]
 
 export default function Palette() {
-    // step 1: interpolate between 'black' and 'white'
-    interpolateValue(swatchNum);
-    // step 2: pick a hue out of 359
-    //TODO let user input hue
-    newHue(50);
-    decreaseSaturation(28);
-    temperature(-12);
-
     //random swatch selector
     // didn't bother to make sure it doesn't repeat
     // because we'll be replacing this
     let randomSwatchA = Math.floor(Math.random()*swatchNum);
     let randomSwatchB = Math.floor(Math.random()*swatchNum);
     let randomSwatchC = Math.floor(Math.random()*swatchNum);
-    // // COMPLEMENTARY PALETTE
-    // complementary(randomSwatchA);
-    // // ANALOGOUS PALETTE
-    // analogous(randomSwatchA, randomSwatchB);
-    // // SPLIT COMPLEMENTARY PALETTE
-    // split(randomSwatchA, randomSwatchB);
-    // // TRIADIC
-    // triadic(randomSwatchA, randomSwatchB);
-    //TETRADIC
-    tetradic(randomSwatchA, randomSwatchB, randomSwatchC);
+
+    paletteReset();
+
+    const [paletteType, setPaletteType] = useState('monochrome');
+
+    if (paletteType === 'analogous') {
+        analogous(randomSwatchA, randomSwatchB);
+    } else if (paletteType === 'complementary') {
+        complementary(randomSwatchA);
+    } else if (paletteType === 'split') {
+        split(randomSwatchA, randomSwatchB);
+    } else if (paletteType === 'triadic') {
+        triadic(randomSwatchA, randomSwatchB);
+    } else if (paletteType === 'tetradic') {
+        tetradic(randomSwatchA, randomSwatchB, randomSwatchC);
+    } else if (paletteType === 'monochrome') {
+        paletteReset();
+        currentScheme = 'monochrome'
+    }
+
+    console.log(swatches);
 
     return (
         <div>
@@ -86,11 +90,38 @@ export default function Palette() {
                 })}
             </div>
             <div id='Label'>{currentScheme} palette</div>
+            <div className='Buttons'>
+                <button onClick={()=> setPaletteType('monochrome')}>monochrome (w/ temperature range)</button>
+                <button onClick={()=> setPaletteType('analogous')}>analogous</button>
+                <button onClick={()=> setPaletteType('complementary')}>complementary</button>
+                <button onClick={()=> setPaletteType('split')}>split complementary</button>
+                <button onClick={()=> setPaletteType('triadic')}>triadic</button>
+                <button onClick={()=> setPaletteType('tetradic')}>tetradic</button>
+            </div>
         </div>
     )
 }
 
 // HELPER FUNCTIONS
+
+// PALETTE RESET
+function paletteReset() {
+    swatches = [
+        {
+            value: 30
+        },
+        {
+            value: 90
+        }
+    ]
+    
+    // step 1: interpolate between 'black' and 'white'
+    interpolateValue(swatchNum);
+    // step 2: pick a hue out of 359
+    newHue(50);
+    decreaseSaturation(28);
+    temperature(-12);
+}
 
 // STEP 1: VALUES
 // add swatches until you reach the max (swatchNum)
@@ -102,7 +133,7 @@ function interpolateValue(num) {
     // difference between 'black' and 'white'
     const totalValue = maxValue - minValue;
     // how much to subtract from the value of the next swatch
-    const increment = totalValue / num;
+    const increment = Math.round(totalValue / num);
 
     let currentValue = maxValue;
 
