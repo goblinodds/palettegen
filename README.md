@@ -1,3 +1,11 @@
+# goblin's palette generator
+
+Click "new random palette" button to generate a new set of colors.
+
+Click one of the palette types (monochrome, analogous etc.) to randomly edit your palette.
+
+Note: monochrome is the default setting and isn't strictly monochrome; one end of the palette is slightly warmer and the other slightly cooler.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
