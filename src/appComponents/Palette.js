@@ -3,15 +3,21 @@ import './Palette.css';
 import { useState } from 'react';
 
 // TODO
-// make it so when you can click the same palette type button twice
-    // try to change paletteType useState to a number?? or something that will actually update the state??
-// make analogous less goofy (often doesn't change by much)
-// CURRENT APPLICATION applies the temperature shift ON TOP OF the hue changes for the final palette
-////// when you make it interactive probably change this so it locks to the "main" color
+// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
+//// minimum 3, max 10?
+// select which swatch is the main color (locked)
+// manually change color of main swatch
+// manually select which swatches are highlight swatches for alternate palettes
+// change saturation spread
+// change temperature spread
 // something that changes value gaps between each!
 ////// like a checkbox for "consistent value gaps"
 ////// and if you uncheck it you can change each
-// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
+
+// ODDITIES
+// make analogous less goofy (often doesn't change by much)
+// CURRENT APPLICATION applies the temperature shift ON TOP OF the hue changes for the final palette
+////// when you make it interactive try changing this so it locks to the "main" color?
 
 let swatchNum = 7;
 let lockedSwatchIndex = 3;
@@ -19,66 +25,72 @@ let currentScheme = 'modified monochrome';
 
 // value must be 0-100 inclusive
 // TODO let user input values
-let swatches = [
-    {
-        value: 30
-    },
-    {
-        value: 90
-    }
-]
+let swatches = []
+
+let baseHue = 50;
 
 export default function Palette() {
     //random swatch selector
     // TRY SETTING THE PALETTETYPE USESTATE TO *THE ACTUAL NEW PALETTE*, swatches ???!
     // https://twitter.com/dan_abramov/status/1591254726330359808?s=20&t=m2j8-x-5hOr0Ki79FNk1Hg
     // https://twitter.com/dan_abramov/status/1591255524674502656?s=20&t=m2j8-x-5hOr0Ki79FNk1Hg
-    const [paletteType, setPaletteType] = useState('monochrome');
-    const [baseHue, setBaseHue] = useState(50);
+    const [palette, setPalette] = useState(swatches);
 
     // TO GET IT TO RERENDER YOU NEED TO CHANGE THE USESTATE
     // BUT IF IT'S THE SAME STATE HOW DO YOU CHANGE IT??
 
     paletteReset(baseHue);
-
-    if (paletteType === 'analogous') {
-        analogous();
-    } else if (paletteType === 'complementary') {
-        complementary();
-    } else if (paletteType === 'split') {
-        split();
-    } else if (paletteType === 'triadic') {
-        triadic();
-    } else if (paletteType === 'tetradic') {
-        tetradic();
-    } else if (paletteType === 'monochrome') {
-        paletteReset(baseHue);
-        currentScheme = 'monochrome (with temperature range)'
-    }
-
+console.log(swatches[1]);
+    // TODO
+    // refactor onClick events
     return (
         <div>
             <div id='Swatches'>
-                {swatches.map((swatch, index) => {
+                {palette.map((swatch, index) => {
                     let color = `hsl(${swatch.hue}deg ${swatch.saturation}% ${swatch.value}%)`;
                     return (
                         <div key={index}>
                             <div className='Swatch' style={{ background: color }}></div>
+                            <div>h: {swatch.hue}</div>
+                            <div>s: {swatch.saturation}</div>
+                            <div>l: {swatch.value}</div>
                         </div>
                     )
                 })}
             </div>
             <div id='Label'>{currentScheme} palette</div>
             <div className='Buttons'>
-                <button onClick={()=>setBaseHue(Math.random()*255)}>new random palette</button>
+                <button onClick={function(){
+                    baseHue = Math.floor(Math.random()*255);
+                    paletteReset(baseHue);
+                    setPalette(swatches);
+                }}>new random palette</button>
             </div>
             <div className='Buttons'>
-                <button onClick={()=> setPaletteType('monochrome')}>monochrome</button>
-                <button onClick={()=> setPaletteType('analogous')}>analogous</button>
-                <button onClick={()=> setPaletteType('complementary')}>complementary</button>
-                <button onClick={()=> setPaletteType('split')}>split complementary</button>
-                <button onClick={()=> setPaletteType('triadic')}>triadic</button>
-                <button onClick={()=> setPaletteType('tetradic')}>tetradic</button>
+                <button onClick={function(){
+                    paletteReset(baseHue);
+                    setPalette(swatches);
+                }}>monochrome</button>
+                <button onClick={function(){
+                    analogous();
+                    setPalette(swatches);
+                }}>analogous</button>
+                <button onClick={function(){
+                    complementary();
+                    setPalette(swatches);
+                }}>complementary</button>
+                <button onClick={function(){
+                    split();
+                    setPalette(swatches);
+                }}>split complementary</button>
+                <button onClick={function(){
+                    triadic();
+                    setPalette(swatches);
+                }}>triadic</button>
+                <button onClick={function(){
+                    tetradic();
+                    setPalette(swatches);
+                }}>tetradic</button>
             </div>
         </div>
     )
@@ -90,7 +102,7 @@ export default function Palette() {
 function paletteReset(baseHue) {
     swatches = [
         {
-            value: 30
+            value: 25
         },
         {
             value: 90
@@ -102,7 +114,8 @@ function paletteReset(baseHue) {
     // step 2: pick a hue out of 359
     newHues(baseHue);
     decreaseSaturation(28);
-    temperature(-12);
+    temperature(-6);
+    currentScheme = 'monochrome (with temperature range)';
 }
 
 // STEP 1: VALUES
