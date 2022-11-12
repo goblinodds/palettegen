@@ -41,14 +41,14 @@ button {
 .Swatch {
     height: 6rem;
     width: 3rem;
-    margin: 0 .5rem;
+    margin: .5rem;
     border-style: solid;
 }
 
 #Swatches {
     display: flex;
     justify-content: center;
-    margin: 2rem;
+    margin: 1.5rem;
 }
 
 .slider {
