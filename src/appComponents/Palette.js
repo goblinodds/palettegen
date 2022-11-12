@@ -3,39 +3,21 @@ import './Palette.css';
 import { useState } from 'react';
 
 // TODO
-// button that gives you a new random color to work with
-// make a version that's a random palette generator that you can put on your site?
-// THEN work on a version that lets users input options??
-
-// NOTE
+// make it so when you can click the same palette type button twice
+    // try to change paletteType useState to a number?? or something that will actually update the state??
+// make analogous less goofy (often doesn't change by much)
 // CURRENT APPLICATION applies the temperature shift ON TOP OF the hue changes for the final palette
-// when you make it interactive probably change this so it locks to the "main" color
-
-// BUILD STATIC VERSION
-// monochrome is default
-// analogous - pick a swatch to change the color of
-// complimentary - pick a swatch to change the color of
-// split complimentary - pick 2?? swatches
-// triadic - pick 2?3?? swatches
-// tetradic - pick 3?4 swatches??
-// thinking these last ones should maybe be random
-// https://twitter.com/goblincodes/status/1586878853158342656?s=20&t=CSyVnXYNbcP5RAQEA4i-8A
-
+////// when you make it interactive probably change this so it locks to the "main" color
 // something that changes value gaps between each!
-// like a checkbox for "consitent value gaps"
-// and if you uncheck it you can change each
+////// like a checkbox for "consistent value gaps"
+////// and if you uncheck it you can change each
+// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
 
-// function that randomizes
-
-// LATER VERSIONS
-//// increase/decrease # of swatches: https://twitter.com/goblincodes/status/1586880288495263744?s=20&t=vhQoNDyIRnvPif-CzAXPgQ
-
-// mandatory seven swatches, but i'd like to be able to let users change this
 let swatchNum = 7;
 let lockedSwatchIndex = 3;
 let currentScheme = 'modified monochrome';
 
-// must be 0-100 inclusive
+// value must be 0-100 inclusive
 // TODO let user input values
 let swatches = [
     {
@@ -48,28 +30,27 @@ let swatches = [
 
 export default function Palette() {
     //random swatch selector
-    // didn't bother to make sure it doesn't repeat
-    // because we'll be replacing this
-    let randomSwatchA = Math.floor(Math.random()*swatchNum);
-    let randomSwatchB = Math.floor(Math.random()*swatchNum);
-    let randomSwatchC = Math.floor(Math.random()*swatchNum);
-
+    // TRY SETTING THE PALETTETYPE USESTATE TO *THE ACTUAL NEW PALETTE*, swatches ???!
+    // https://twitter.com/dan_abramov/status/1591254726330359808?s=20&t=m2j8-x-5hOr0Ki79FNk1Hg
+    // https://twitter.com/dan_abramov/status/1591255524674502656?s=20&t=m2j8-x-5hOr0Ki79FNk1Hg
     const [paletteType, setPaletteType] = useState('monochrome');
-
     const [baseHue, setBaseHue] = useState(50);
+
+    // TO GET IT TO RERENDER YOU NEED TO CHANGE THE USESTATE
+    // BUT IF IT'S THE SAME STATE HOW DO YOU CHANGE IT??
 
     paletteReset(baseHue);
 
     if (paletteType === 'analogous') {
-        analogous(randomSwatchA, randomSwatchB);
+        analogous();
     } else if (paletteType === 'complementary') {
-        complementary(randomSwatchA);
+        complementary();
     } else if (paletteType === 'split') {
-        split(randomSwatchA, randomSwatchB);
+        split();
     } else if (paletteType === 'triadic') {
-        triadic(randomSwatchA, randomSwatchB);
+        triadic();
     } else if (paletteType === 'tetradic') {
-        tetradic(randomSwatchA, randomSwatchB, randomSwatchC);
+        tetradic();
     } else if (paletteType === 'monochrome') {
         paletteReset(baseHue);
         currentScheme = 'monochrome (with temperature range)'
@@ -213,8 +194,8 @@ function temperature(increment) {
 // probably some way to REFACTOR these so you dont have to keep redefining selectedSwatch
 
 // COMPLEMENTARY
-function complementary(swatch){
-    let selectedSwatch = swatches[swatch];
+function complementary(){
+    let selectedSwatch = swatches[Math.floor(Math.random()*swatchNum)];
     // changes swatch hue to one directly across the color wheel
     selectedSwatch.hue += 180;
     hueCleanup(selectedSwatch);
@@ -223,23 +204,25 @@ function complementary(swatch){
 
 //ANALOGOUS
 // two swatches that are 60 or fewer degrees out from the standard hue)
-function analogous(swatchA, swatchB){
-    let selectedSwatchA = swatches[swatchA];
-    let selectedSwatchB = swatches[swatchB];
+function analogous(){
+    let selectedSwatchA = swatches[Math.floor(Math.random()*swatchNum)];
+    let selectedSwatchB = swatches[Math.floor(Math.random()*swatchNum)];
 
-    // random number that's 60 or less
-    // but possibly you want it to be at least 10 or you won't notice?
-    selectedSwatchA.hue += (Math.floor(Math.random()*60));
-    selectedSwatchB.hue -= (Math.floor(Math.random()*60));
+    // random number that's between 10 to 60-- 10 so you notice, 50 so it's not extreme
+    // ideally if swatch is before the locked swatch, add or subtract
+    // if swatch is after, do the opposite
+    // but this didnt work when i tried it before
+    selectedSwatchA.hue += 10 + (Math.floor(Math.random()*50));
+    selectedSwatchB.hue -= 10 + (Math.floor(Math.random()*50));
     hueCleanup(selectedSwatchA);
     hueCleanup(selectedSwatchB);
     currentScheme = 'analogous';
 }
 
 // SPLIT COMPLEMENTARY
-function split(swatchA, swatchB){
-    let selectedSwatchA = swatches[swatchA];
-    let selectedSwatchB = swatches[swatchB];
+function split(){
+    let selectedSwatchA = swatches[Math.floor(Math.random()*swatchNum)];
+    let selectedSwatchB = swatches[Math.floor(Math.random()*swatchNum)];
     // changes swatches' hues to two hues 150 degrees away from main color on the color wheel
     selectedSwatchA.hue += 150;
     selectedSwatchB.hue -= 150;
@@ -249,9 +232,9 @@ function split(swatchA, swatchB){
 }
 
 // TRIADIC
-function triadic(swatchA, swatchB){
-    let selectedSwatchA = swatches[swatchA];
-    let selectedSwatchB = swatches[swatchB];
+function triadic(){
+    let selectedSwatchA = swatches[Math.floor(Math.random()*swatchNum)];
+    let selectedSwatchB = swatches[Math.floor(Math.random()*swatchNum)];
     // changes swatches' hues to two hues 120 degrees away from main color on the color wheel - equidistant
     selectedSwatchA.hue += 120;
     selectedSwatchB.hue -= 120;
@@ -261,10 +244,10 @@ function triadic(swatchA, swatchB){
 }
 
 // TETRADIC
-function tetradic(swatchA, swatchB, swatchC){
-    let selectedSwatchA = swatches[swatchA];
-    let selectedSwatchB = swatches[swatchB];
-    let selectedSwatchC = swatches[swatchC];
+function tetradic(){
+    let selectedSwatchA = swatches[Math.floor(Math.random()*swatchNum)];
+    let selectedSwatchB = swatches[Math.floor(Math.random()*swatchNum)];
+    let selectedSwatchC = swatches[Math.floor(Math.random()*swatchNum)];
     // changes THREE swatches' hues
     // each 90 degrees from the next
     selectedSwatchA.hue += 90;
