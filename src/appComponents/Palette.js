@@ -20,6 +20,7 @@ import { useState } from 'react';
 ////// when you make it interactive try changing this so it locks to the "main" color?
 
 let swatchNum = 7;
+let swatchMaximum = 10;
 let lockedSwatchIndex = 3;
 let currentScheme = 'modified monochrome';
 
@@ -40,12 +41,27 @@ export default function Palette() {
     // BUT IF IT'S THE SAME STATE HOW DO YOU CHANGE IT??
 
     paletteReset(baseHue);
-console.log(swatches[1]);
     // TODO
     // refactor onClick events
     return (
         <div>
             <div id='Swatches'>
+                <div id='Increment'>   
+                    <button
+                        onClick={function () {
+                            addSwatch();
+                            setPalette(swatches);
+                        }}
+                        disabled = {swatches[swatchMaximum-1] ? true : false}
+                    >add swatch</button>
+                    <button
+                        onClick={function () {
+                            removeSwatch();
+                            setPalette(swatches);
+                        }}
+                        disabled = {swatches[lockedSwatchIndex+1] ? false : true}
+                    >remove swatch</button>
+                </div>
                 {palette.map((swatch, index) => {
                     let color = `hsl(${swatch.hue}deg ${swatch.saturation}% ${swatch.value}%)`;
                     return (
@@ -64,13 +80,13 @@ console.log(swatches[1]);
                     baseHue = Math.floor(Math.random()*255);
                     paletteReset(baseHue);
                     setPalette(swatches);
-                }}>new random palette</button>
+                }}>new monochrome palette</button>
             </div>
             <div className='Buttons'>
                 <button onClick={function(){
                     paletteReset(baseHue);
                     setPalette(swatches);
-                }}>monochrome</button>
+                }}>reset</button>
                 <button onClick={function(){
                     analogous();
                     setPalette(swatches);
@@ -113,9 +129,25 @@ function paletteReset(baseHue) {
     interpolateValue(swatchNum);
     // step 2: pick a hue out of 359
     newHues(baseHue);
-    decreaseSaturation(28);
+    decreaseSaturation(20);
     temperature(-6);
     currentScheme = 'monochrome (with temperature range)';
+}
+
+// ADD/REMOVE SWATCHES
+
+function addSwatch(){
+    if (swatches.length < swatchMaximum) {
+        swatchNum++;
+    }
+    paletteReset(baseHue);
+}
+
+function removeSwatch(){
+    if (swatches.length - 1 > lockedSwatchIndex) {
+        swatchNum--;
+    }
+    paletteReset(baseHue);
 }
 
 // STEP 1: VALUES
@@ -158,19 +190,32 @@ function newHues(selectedHue) {
 // TODO let user choose a swatch to lock
 // TODO limit range of #s accepted (positive only)
 // everything moving outward from it gets less saturated
-function decreaseSaturation(increment) {
-    for (let i = 0; i < swatches.length; i++) {
-        let currentSwatch = swatches[i];
-        // number of swatches from current to locked
-        let swatchesToIncrement;
-        if (i <= lockedSwatchIndex) {
-            swatchesToIncrement = lockedSwatchIndex - i;
+function decreaseSaturation(minimum) {
+
+    let first = swatches[0];
+    let lastIndex = swatches.length-1
+    let last = swatches[lastIndex];
+    first.saturation = minimum;
+    last.saturation = minimum;
+
+    let firstSet = Math.abs(lockedSwatchIndex);
+    let lastSet = Math.abs(lastIndex - lockedSwatchIndex);
+
+    for (let i = 1; i < swatches.length - 1; i++) {
+        let current = swatches[i];
+        if (i < lockedSwatchIndex) {
+            let increment = Math.floor((100 - minimum)/firstSet)
+            // evenly spaces saturation between swatches from first to locked
+            current.saturation = swatches[i-1].saturation + increment;
         } else if (i > lockedSwatchIndex) {
-            swatchesToIncrement = i - lockedSwatchIndex;
+            let increment = Math.floor((100 - minimum)/lastSet)
+            // evenly spaces saturation between swatches from first to locked
+            current.saturation = swatches[i-1].saturation - increment;
         }
-        // SUBTRACT the increment times however many swatches away from locked the current swatch is
-        currentSwatch.saturation = currentSwatch.saturation - (increment*swatchesToIncrement);
     }
+
+    // maintains locked swatch at 100 saturation
+    swatches[lockedSwatchIndex].saturation = 100;
 }
 
 // STEP 4: TEMPERATURE RANGE
